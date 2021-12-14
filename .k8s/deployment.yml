@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jupiter-web
+  labels:
+    app.kubernetes.io/name: jupiter
+    process: web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: jupiter
+      process: web
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: jupiter
+        process: web
+    spec:
+      containers:
+        - name: jupiter-web
+          image: ualbertalib/jupiter:deployment
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: jupiter
+          ports:
+            - containerPort: 3000
+              name: http
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+          resources:
+            requests:
+              cpu: 150m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jupiter-sidekiq
+  labels:
+    app.kubernetes.io/name: jupiter
+    process: sidekiq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: jupiter
+      process: sidekiq
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: jupiter
+        process: sidekiq
+    spec:
+      containers:
+        - name: jupiter-sidekiq
+          image: ualbertalib/jupiter:deployment
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: jupiter
+          command: ["bundle exec sidekiq"]
+          readinessProbe:
+            failureThreshold: 10
+            exec:
+              command:
+              - cat
+              - /var/www/tmp/sidekiq_process_has_started_and_will_begin_processing_jobs
+            initialDelaySeconds: 10
+            periodSeconds: 2
+            successThreshold: 2
+            timeoutSeconds: 1
+          resources:
+            requests:
+              cpu: 150m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 60 # put your longest Job time here plus security time.

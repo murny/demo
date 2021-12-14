@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jupiter-ingress
+spec:
+  rules:
+    host: era.library.ualberta.ca
+    http:
+      paths:
+        backend:
+          service:
+            name: jupiter
+            port: 80
+        path: /
+        pathType: Prefix

@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jupiter
+data:
+  PORT: "3000"
+  RACK_ENV: production
+  RAILS_ENV: production
+  RAILS_LOG_TO_STDOUT: "true"
+  RAILS_SERVE_STATIC_FILES: "true"
+  SECRET_KEY_BASE: 33d83bc35b707a1f70ac9475cdaabd4224fca0d3edc07e0ce6db13515d1c1e3aaf4c3b8bf580d9ea6198ec90bae2005ca807fa46a9aee5906bd64be99cc2e065
+  DATABASE_URL: postgresql://jupiter:mysecretpassword@postgres:5432/
+  SOLR_URL: http://solr:8983/solr/jupiter-uat
+  REDIS_URL: redis://redis/1
+  SAML_PRIVATE_KEY: ""
+  SAML_CERTIFICATE: ""
+  ROLLBAR_TOKEN: ""
+  GOOGLE_ANALYTICS_TOKEN: ""
+  TLD_LENGTH: "3"
+  GOOGLE_CLIENT_ID: ""
+  GOOGLE_CLIENT_SECRET: ""
+  GOOGLE_DEVELOPER_KEY: ""
+  ERA_HOST: era.uat.library.ualberta.ca
+  DIGITIZATION_HOST: digitalcollections.uat.library.ualberta.ca
