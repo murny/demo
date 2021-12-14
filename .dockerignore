@@ -1,0 +1,16 @@
+.git
+.gitignore
+*.md
+
+tmp
+tmp/cache
+!tmp/pids/.keep
+log
+coverage/
+.bundle
+.ruby-version
+vendor/bundle
+
+.dockerignore
+docker-compose.yml
+docker-compose.demo.yml
