@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: jupiter
+  name: demo
 data:
   PORT: "3000"
   RACK_ENV: production

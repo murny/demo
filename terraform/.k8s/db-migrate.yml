@@ -1,21 +1,21 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: jupiter-migrate
+  name: demo-migrate
   labels:
-    app.kubernetes.io/name: jupiter-migrate
+    app.kubernetes.io/name: demo-migrate
 spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: jupiter-migrate
+        app.kubernetes.io/name: demo-migrate
     spec:
       containers:
-        - name: jupiter-migrate
-          image: ualbertalib/jupiter:deployment
+        - name: demo-migrate
+          image: murny/demo:latest
           imagePullPolicy: IfNotPresent
           command: ["bundle exec rails db:migrate"]
           envFrom:
             - configMapRef:
-                name: jupiter
+                name: demo
       restartPolicy: Never

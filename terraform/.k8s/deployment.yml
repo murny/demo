@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: jupiter-web
+  name: demo-web
   labels:
-    app.kubernetes.io/name: jupiter
+    app.kubernetes.io/name: demo
     process: web
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app.kubernetes.io/name: jupiter
+      app.kubernetes.io/name: demo
       process: web
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: jupiter
+        app.kubernetes.io/name: demo
         process: web
     spec:
       containers:
-        - name: jupiter-web
-          image: ualbertalib/jupiter:deployment
+        - name: demo-web
+          image: murny/demo:latest
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
-                name: jupiter
+                name: demo
           ports:
             - containerPort: 3000
               name: http
@@ -47,29 +47,29 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: jupiter-sidekiq
+  name: demo-sidekiq
   labels:
-    app.kubernetes.io/name: jupiter
+    app.kubernetes.io/name: demo
     process: sidekiq
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: jupiter
+      app.kubernetes.io/name: demo
       process: sidekiq
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: jupiter
+        app.kubernetes.io/name: demo
         process: sidekiq
     spec:
       containers:
-        - name: jupiter-sidekiq
-          image: ualbertalib/jupiter:deployment
+        - name: demo-sidekiq
+          image: murny/demo:latest
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
-                name: jupiter
+                name: demo
           command: ["bundle exec sidekiq"]
           readinessProbe:
             failureThreshold: 10
