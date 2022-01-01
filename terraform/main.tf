@@ -69,23 +69,23 @@ resource "azurerm_postgresql_server" "db" {
   ssl_minimal_tls_version_enforced = "TLS1_2"
 }
 
-# # Create a PostgreSQL Database
-# resource "azurerm_postgresql_database" "postgresql-db" {
-#   name                = "demo_production"
-#   resource_group_name = azurerm_resource_group.rg.name
-#   server_name         = azurerm_postgresql_server.db.name
-#   charset             = "utf8"
-#   collation           = "English_United States.1252"
-# }
+# Create a PostgreSQL Database
+resource "azurerm_postgresql_database" "postgresql-db" {
+  name                = "demo_production"
+  resource_group_name = azurerm_resource_group.rg.name
+  server_name         = azurerm_postgresql_server.db.name
+  charset             = "utf8"
+  collation           = "English_United States.1252"
+}
 
 # # Firewall Rule to access the PostgreSQL Server
-# resource "azurerm_postgresql_firewall_rule" "postgresql-fw-rule" {
-#   name                = "${var.prefix}-postgresql-office-access"
-#   resource_group_name = azurerm_resource_group.postgresql-rg.name
-#   server_name         = azurerm_mysql_server.postgresql-server.name
-#   start_ip_address    = "210.170.94.100"
-#   end_ip_address      = "210.170.94.120"
-# }
+resource "azurerm_postgresql_firewall_rule" "postgresql-fw-rule" {
+  name                = "${var.app-name}-postgresql-fw-rules"
+  resource_group_name = azurerm_resource_group.rg.name
+  server_name         = azurerm_postgresql_server.db.name
+  start_ip_address    = "0.0.0.0"
+  end_ip_address      = "255.255.255.255"
+}
 
 resource "azurerm_redis_cache" "redis" {
   name                = "${var.app-name}-cache"
