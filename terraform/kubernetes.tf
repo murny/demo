@@ -23,7 +23,7 @@ resource "kubernetes_config_map" "config" {
     RAILS_ENV = "production"
     DB_HOST = azurerm_postgresql_server.db.fqdn
     DB_USER = var.postgresql-admin-login
-    DB_PASSWORD = var.postgresql-admin-login
+    DB_PASSWORD = var.postgresql-admin-password
     REDIS_URL = "redis://:${azurerm_redis_cache.redis.primary_access_key}@${azurerm_redis_cache.redis.hostname}:${azurerm_redis_cache.redis.ssl_port}/0"
   }
 }
@@ -80,15 +80,15 @@ resource "kubernetes_deployment" "app" {
               name = "${var.app-name}-config"
             }
           }
-          readiness_probe {
-            http_get {
-              path = "/healthcheck"
-              port = 3000
-            }
-            initial_delay_seconds = 10
-            period_seconds = 10
-            timeout_seconds = 2
-          }
+          # readiness_probe {
+          #   http_get {
+          #     path = "/healthcheck"
+          #     port = 3000
+          #   }
+          #   initial_delay_seconds = 10
+          #   period_seconds = 10
+          #   timeout_seconds = 2
+          # }
           resources {
             limits = {
               cpu    = "250m"
@@ -136,7 +136,7 @@ resource "kubernetes_deployment" "worker" {
           name = "${var.app-name}-workers"
           image = "murny/demo:main"
           image_pull_policy = "Always"
-          command = ["bundle exec sidekiq"]
+          command = ["sidekiq"]
 
           env_from {
             config_map_ref {
@@ -154,25 +154,25 @@ resource "kubernetes_deployment" "worker" {
             }
           }
 
-          readiness_probe {
-            exec {
-              command = [ "cat", "/var/www/tmp/sidekiq_process_has_started_and_will_begin_processing_jobs"]
-            }
-            http_get {
-              path = "/nginx_status"
-              port = 80
+          # readiness_probe {
+          #   exec {
+          #     command = [ "cat", "/var/www/tmp/sidekiq_process_has_started_and_will_begin_processing_jobs"]
+          #   }
+          #   http_get {
+          #     path = "/nginx_status"
+          #     port = 80
 
-              http_header {
-                name  = "X-Custom-Header"
-                value = "Awesome"
-              }
-            }
-            failure_threshold = 10
-            initial_delay_seconds = 10
-            period_seconds        = 2
-            success_threshold = 2
-            timeout_seconds = 1
-          }
+          #     http_header {
+          #       name  = "X-Custom-Header"
+          #       value = "Awesome"
+          #     }
+          #   }
+          #   failure_threshold = 10
+          #   initial_delay_seconds = 10
+          #   period_seconds        = 2
+          #   success_threshold = 2
+          #   timeout_seconds = 1
+          # }
         }
         restart_policy = "Always"
         termination_grace_period_seconds = 60
