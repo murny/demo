@@ -4,7 +4,7 @@ services:
   postgres:
     image: postgres:13
     environment:
-      POSTGRES_PASSWORD: awesome_password
+      POSTGRES_PASSWORD: mysecretpassword
     ports:
       - "5432:5432"
 
@@ -22,7 +22,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgresql://postgres:awesome_password@postgres:5432/demo?encoding=utf8&pool=5&timeout=5000
+      - DATABASE_URL=postgresql://postgres:mysecretpassword@postgres:5432/demo?encoding=utf8&pool=5&timeout=5000
       - REDIS_URL=redis://redis:6379/0
       - RAILS_ENV=development
 
@@ -35,7 +35,7 @@ services:
       - postgres
       - redis
     environment:
-      - DATABASE_URL=postgresql://postgres:awesome_password@postgres:5432/demo?encoding=utf8&pool=5&timeout=5000
+      - DATABASE_URL=postgresql://postgres:mysecretpassword@postgres:5432/demo?encoding=utf8&pool=5&timeout=5000
       - REDIS_URL=redis://redis:6379/0
       - RAILS_ENV=development
 

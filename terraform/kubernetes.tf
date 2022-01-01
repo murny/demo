@@ -18,13 +18,19 @@ resource "kubernetes_config_map" "config" {
 
   data = {
     RAILS_MASTER_KEY = data.local_file.masterkey.content
+    PORT = "3000"
+    RAILS_LOG_TO_STDOUT = "true"
     RAILS_ENV = "production"
-    DATABASE_URL = "postgres://${var.postgresql-admin-login}:${var.postgresql-admin-login}@${azurerm_postgresql_server.db.fqdn}"
+    DB_HOST = azurerm_postgresql_server.db.fqdn
+    DB_USER = var.postgresql-admin-login
+    DB_PASSWORD = var.postgresql-admin-login
     REDIS_URL = "redis://:${azurerm_redis_cache.redis.primary_access_key}@${azurerm_redis_cache.redis.hostname}:${azurerm_redis_cache.redis.ssl_port}/0"
   }
 }
 
 resource "kubernetes_deployment" "app" {
+  depends_on = [kubernetes_config_map.config]
+
   metadata {
     name = "${var.app-name}-app"
     labels = {
@@ -74,13 +80,35 @@ resource "kubernetes_deployment" "app" {
               name = "${var.app-name}-config"
             }
           }
+          readiness_probe {
+            http_get {
+              path = "/healthcheck"
+              port = 3000
+            }
+            initial_delay_seconds = 10
+            period_seconds = 10
+            timeout_seconds = 2
+          }
+          resources {
+            limits = {
+              cpu    = "250m"
+              memory = "256Mi"
+            }
+            requests = {
+              cpu    = "150m"
+              memory = "128Mi"
+            }
+          }
         }
+        restart_policy = "Always"
       }
     }
   }
 }
 
-resource "kubernetes_deployment" "workers" {
+resource "kubernetes_deployment" "worker" {
+  depends_on = [kubernetes_config_map.config]
+
   metadata {
     name = "${var.app-name}-workers"
     namespace = "${var.app-name}"
@@ -105,15 +133,49 @@ resource "kubernetes_deployment" "workers" {
 
       spec {
         container {
-          image = "murny/demo:main"
           name = "${var.app-name}-workers"
-          command = ["sidekiq"]
+          image = "murny/demo:main"
+          image_pull_policy = "Always"
+          command = ["bundle exec sidekiq"]
+
           env_from {
             config_map_ref {
               name = "${var.app-name}-config"
             }
           }
+          resources {
+            limits = {
+              cpu    = "250m"
+              memory = "256Mi"
+            }
+            requests = {
+              cpu    = "150m"
+              memory = "128Mi"
+            }
+          }
+
+          readiness_probe {
+            exec {
+              command = [ "cat", "/var/www/tmp/sidekiq_process_has_started_and_will_begin_processing_jobs"]
+            }
+            http_get {
+              path = "/nginx_status"
+              port = 80
+
+              http_header {
+                name  = "X-Custom-Header"
+                value = "Awesome"
+              }
+            }
+            failure_threshold = 10
+            initial_delay_seconds = 10
+            period_seconds        = 2
+            success_threshold = 2
+            timeout_seconds = 1
+          }
         }
+        restart_policy = "Always"
+        termination_grace_period_seconds = 60
       }
     }
   }
