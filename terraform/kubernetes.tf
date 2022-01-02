@@ -33,7 +33,7 @@ resource "kubernetes_config_map" "config" {
     DB_HOST = azurerm_postgresql_server.db.fqdn
     DB_USER = "${var.postgresql-admin-login}@${azurerm_postgresql_server.db.name}"
     DB_PASSWORD = var.postgresql-admin-password
-    REDIS_URL = "redis://:${azurerm_redis_cache.redis.primary_access_key}@${azurerm_redis_cache.redis.hostname}:${azurerm_redis_cache.redis.ssl_port}/0"
+    REDIS_URL = "redis://:${urlencode(azurerm_redis_cache.redis.primary_access_key)}@${azurerm_redis_cache.redis.hostname}:${azurerm_redis_cache.redis.port}/0"
   }
 }
 

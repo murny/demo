@@ -27,8 +27,7 @@ RUN yarn install --check-files
 COPY . /app/
 
 #RUN yarn install --check-files
-ARG RAILS_MASTER_KEY
-RUN bundle exec rake assets:precompile
+RUN --mount=type=secret,id=master_key,dst=/app/config/master.key bin/rails assets:precompile
 
 EXPOSE 3000
 

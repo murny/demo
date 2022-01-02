@@ -66,7 +66,7 @@ resource "azurerm_postgresql_server" "db" {
   # TODO: Can we disabled public network access and use SSL?
   public_network_access_enabled    = true
   ssl_enforcement_enabled          = false
-  ssl_minimal_tls_version_enforced = "TLS1_2"
+  # ssl_minimal_tls_version_enforced = "TLS1_2"
 }
 
 # Create a PostgreSQL Database
@@ -94,7 +94,10 @@ resource "azurerm_redis_cache" "redis" {
   capacity            = 2
   family              = "C"
   sku_name            = "Standard"
-  minimum_tls_version = "1.2"
+
+  # TODO: Look into SSL
+  enable_non_ssl_port = true
+  # minimum_tls_version = "1.2"
 
   redis_configuration {
   }
@@ -102,7 +105,7 @@ resource "azurerm_redis_cache" "redis" {
 
 # Allow everything for now
 resource "azurerm_redis_firewall_rule" "redis-fw-rules" {
-  name                = "${var.app-name}-redis-fw-rules"
+  name                = "${var.app-name}_redis_fw_rules"
   redis_cache_name    = azurerm_redis_cache.redis.name
   resource_group_name = azurerm_resource_group.rg.name
   start_ip            = "0.0.0.0"
