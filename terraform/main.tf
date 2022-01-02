@@ -78,8 +78,8 @@ resource "azurerm_postgresql_database" "postgresql-db" {
   collation           = "English_United States.1252"
 }
 
-# # Firewall Rule to access the PostgreSQL Server
-resource "azurerm_postgresql_firewall_rule" "postgresql-fw-rule" {
+# Allow everything for now
+resource "azurerm_postgresql_firewall_rule" "postgresql-fw-rules" {
   name                = "${var.app-name}-postgresql-fw-rules"
   resource_group_name = azurerm_resource_group.rg.name
   server_name         = azurerm_postgresql_server.db.name
@@ -100,6 +100,15 @@ resource "azurerm_redis_cache" "redis" {
   }
 }
 
+# Allow everything for now
+resource "azurerm_redis_firewall_rule" "redis-fw-rules" {
+  name                = "${var.app-name}-redis-fw-rules"
+  redis_cache_name    = azurerm_redis_cache.redis.name
+  resource_group_name = azurerm_resource_group.rg.name
+  start_ip            = "0.0.0.0"
+  end_ip              = "255.255.255.255"
+}
+
 provider "helm" {
   kubernetes {
     host = azurerm_kubernetes_cluster.cluster.kube_config.0.host
@@ -114,11 +123,4 @@ provider "kubernetes" {
     client_certificate = base64decode(azurerm_kubernetes_cluster.cluster.kube_config.0.client_certificate)
     client_key = base64decode(azurerm_kubernetes_cluster.cluster.kube_config.0.client_key)
     cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.cluster.kube_config.0.cluster_ca_certificate)
-}
-
-resource "helm_release" "ingress-nginx" {
-  depends_on = [local_file.kubeconfig]
-  name       = "${var.app-name}-ingress-nginx"
-  repository = "https://kubernetes.github.io/ingress-nginx"
-  chart      = "ingress-nginx"
 }

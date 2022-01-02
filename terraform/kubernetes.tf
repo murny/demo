@@ -8,6 +8,15 @@ resource "kubernetes_namespace" "namespace" {
   }
 }
 
+resource "helm_release" "ingress-nginx" {
+  depends_on = [local_file.kubeconfig, kubernetes_namespace.namespace]
+  name       = "${var.app-name}-ingress-nginx"
+  repository = "https://kubernetes.github.io/ingress-nginx"
+  chart      = "ingress-nginx"
+  namespace =  "${var.app-name}"
+}
+
+
 resource "kubernetes_config_map" "config" {
   depends_on = [azurerm_redis_cache.redis, azurerm_postgresql_server.db]
 
@@ -80,15 +89,15 @@ resource "kubernetes_deployment" "app" {
               name = "${var.app-name}-config"
             }
           }
-          # readiness_probe {
-          #   http_get {
-          #     path = "/healthcheck"
-          #     port = 3000
-          #   }
-          #   initial_delay_seconds = 10
-          #   period_seconds = 10
-          #   timeout_seconds = 2
-          # }
+          readiness_probe {
+            http_get {
+              path = "/healthcheck"
+              port = 3000
+            }
+            initial_delay_seconds = 10
+            period_seconds = 10
+            timeout_seconds = 2
+          }
           resources {
             limits = {
               cpu    = "250m"
@@ -154,17 +163,17 @@ resource "kubernetes_deployment" "worker" {
             }
           }
 
-          # readiness_probe {
-          #   exec {
-          #     command = [ "cat", "/var/www/tmp/sidekiq_process_has_started_and_will_begin_processing_jobs"]
-          #   }
-          #
-          #   failure_threshold = 10
-          #   initial_delay_seconds = 10
-          #   period_seconds        = 2
-          #   success_threshold = 2
-          #   timeout_seconds = 1
-          # }
+          readiness_probe {
+            exec {
+              command = [ "cat", "/var/www/tmp/sidekiq_process_has_started_and_will_begin_processing_jobs"]
+            }
+
+            failure_threshold = 10
+            initial_delay_seconds = 10
+            period_seconds        = 2
+            success_threshold = 2
+            timeout_seconds = 1
+          }
         }
         restart_policy = "Always"
         termination_grace_period_seconds = 60
@@ -185,6 +194,8 @@ resource "kubernetes_service" "service" {
       target_port = 3000
     }
 
+    type = "NodePort"
+
     selector = {
       app = "${var.app-name}"
     }
@@ -202,7 +213,7 @@ resource "kubernetes_ingress" "ingress" {
   }
   spec {
     rule {
-      host = "murny.tech"
+      # host = "murny.tech"
       http {
         path {
           path = "/"
