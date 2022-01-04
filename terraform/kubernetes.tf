@@ -145,7 +145,7 @@ resource "kubernetes_deployment" "worker" {
           name = "${var.app-name}-workers"
           image = "murny/demo:main"
           image_pull_policy = "Always"
-          command = ["sidekiq"]
+          command = ["bundle",  "exec", "sidekiq"]
 
           env_from {
             config_map_ref {
@@ -165,12 +165,12 @@ resource "kubernetes_deployment" "worker" {
 
           readiness_probe {
             exec {
-              command = [ "cat", "/var/www/tmp/sidekiq_process_has_started_and_will_begin_processing_jobs"]
+              command = [ "cat", "/app/tmp/sidekiq_process_has_started_and_will_begin_processing_jobs"]
             }
 
             failure_threshold = 10
             initial_delay_seconds = 10
-            period_seconds        = 2
+            period_seconds = 2
             success_threshold = 2
             timeout_seconds = 1
           }
