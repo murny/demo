@@ -100,6 +100,8 @@ resource "azurerm_redis_cache" "redis" {
   # minimum_tls_version = "1.2"
 
   redis_configuration {
+    # https://github.com/mperham/sidekiq/wiki/Using-Redis#memory
+    maxmemory_policy   = "noeviction"
   }
 }
 
