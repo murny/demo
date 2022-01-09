@@ -115,8 +115,15 @@ resource "azurerm_redis_firewall_rule" "redis-fw-rules" {
 }
 
 
+# blob account name must be unique across Azure
+resource "random_string" "random" {
+  length           = 10
+  special          = false
+  upper = false
+}
+
 resource "azurerm_storage_account" "blob_account" {
-  name                     = "${var.app-name}_blob_account"
+  name                     = "${var.app-name}account${random_string.random.result}"
   resource_group_name      = azurerm_resource_group.rg.name
   location                 = azurerm_resource_group.rg.location
   account_tier             = "Standard"
@@ -124,7 +131,7 @@ resource "azurerm_storage_account" "blob_account" {
 }
 
 resource "azurerm_storage_container" "storage_container" {
-  name                  = "${var.app-name}_blob_container"
+  name                  = "${var.app-name}-blob-container"
   storage_account_name  = azurerm_storage_account.blob_account.name
   container_access_type = "private"
 }
