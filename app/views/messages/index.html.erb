@@ -1,9 +1,23 @@
-<p style="color: green"><%= notice %></p>
+<%= turbo_stream_from "messages" %>
 
-<h1>Messages</h1>
-
-<div id="messages">
-  <%= render @messages %>
+<div class="mt-8 max-w-3xl mx-auto">
+  <div class="space-y-6">
+    <section>
+      <div class="bg-white shadow sm:rounded-lg sm:overflow-hidden">
+        <div class="divide-y divide-gray-200">
+          <div class="px-4 py-5 sm:px-6">
+            <h2 id="notes-title" class="text-lg font-medium text-gray-900">Messages</h2>
+          </div>
+          <div class="px-4 pb-6 sm:px-6">
+              <ul role="list" class="divide-y divide-gray-200" id="messages">
+                <%= render @messages %>
+              </ul>
+          </div>
+        </div>
+        <div class="px-4 py-6 sm:px-6">
+          <%= render "messages/form", message: @message %>
+        </div>
+      </div>
+    </section>
+  </div>
 </div>
-
-<%= link_to "New message", new_message_path %>

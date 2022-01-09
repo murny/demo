@@ -1,27 +1,23 @@
-<%= form_with(model: message) do |form| %>
-  <% if message.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(message.errors.count, "error") %> prohibited this message from being saved:</h2>
+<%= turbo_frame_tag "new_message" do %>
+  <%= form_with(model: message) do |form| %>
+    <% if message.errors.any? %>
+      <div class="mt-2 text-sm text-red-600">
+        <ul>
+          <% message.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
 
-      <ul>
-        <% message.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+      <%= form.label :body, class: "sr-only" %>
+
+      <div class="mt-1 sm:mt-0 sm:col-span-2">
+        <%= form.rich_text_area :body, class: "shadow-sm block w-full focus:ring-blue-500 focus:border-blue-500 sm:text-sm border border-gray-300 rounded-md", placeholder: "Add a message" %>
+      </div>
+
+    <div class="mt-3 flex items-center justify-end">
+      <%= form.submit "Post", class: "inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
     </div>
   <% end %>
-
-  <div>
-    <%= form.label :body, style: "display: block" %>
-    <%= form.text_field :body %>
-  </div>
-
-  <div>
-    <%= form.label :processed, style: "display: block" %>
-    <%= form.check_box :processed %>
-  </div>
-
-  <div>
-    <%= form.submit %>
-  </div>
 <% end %>

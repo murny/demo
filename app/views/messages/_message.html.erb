@@ -1,15 +1,30 @@
-<div id="<%= dom_id message %>">
-  <p>
-    <strong>Body:</strong>
-    <%= message.body %>
-  </p>
+<li id="<%= dom_id(message) %>" class="py-5">
+  <div class="flex justify-between items-baseline">
+    <div class="mt-1 text-sm text-gray-700">
+      <p> <%= message.body %></p>
+    </div>
+    <% if message.processed %>
+      <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+        Processed
+      </p>
+    <% else %>
+      <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+        Unprocessed
+      </p>
+    <% end %>
+  </div>
 
-  <p>
-    <strong>Processed:</strong>
-    <%= message.processed %>
-  </p>
-
-  <p>
-    <%= link_to "Show this message", message %>
-  </p>
-</div>
+  <div class="mt-2 text-sm space-x-2 flex justify-between items-baseline">
+    <span class="text-gray-500 font-medium"><%= local_time_ago(message.created_at) %></span>
+    <div class="ml-4 mt-2 flex-shrink-0 flex">
+      <%= link_to "Edit",
+                  edit_message_path(message),
+                  class: "relative inline-flex items-center px-2 py-1 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+      <%= button_to "Destroy",
+                    message_path(message),
+                    method: :delete,
+                    data: { confirm: "Are you sure?" },
+                    class: "ml-3 relative inline-flex items-center px-2 py-1 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+    </div>
+  </div>
+</li>

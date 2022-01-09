@@ -1,0 +1,3 @@
+<%= turbo_stream.append "messages", partial: "messages/message", locals: { message: @message } %>
+<%= turbo_stream.replace "new_message", partial: "messages/form", locals: { message: Message.new } %>
+<%= turbo_stream.append "flash", partial: "application/flash", locals: { flash: { notice: "Your message was created successfully" } }%>

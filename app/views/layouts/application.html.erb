@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="h-full bg-gray-100">
   <head>
     <title>Demo</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -10,7 +10,13 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
   </head>
 
-  <body>
-    <%= yield %>
+  <body class="h-full">
+    <div class="min-h-full">
+      <%= render partial: 'navbar' %>
+      <%= render partial: 'flash' %>
+      <main class="py-10">
+        <%= yield %>
+      </main>
+    </div>
   </body>
 </html>

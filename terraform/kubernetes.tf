@@ -18,7 +18,7 @@ resource "helm_release" "ingress-nginx" {
 
 
 resource "kubernetes_config_map" "config" {
-  depends_on = [azurerm_redis_cache.redis, azurerm_postgresql_server.db]
+  depends_on = [azurerm_redis_cache.redis, azurerm_postgresql_server.db, azurerm_storage_container.storage_container]
 
   metadata {
     name = "${var.app-name}-config"
@@ -34,6 +34,9 @@ resource "kubernetes_config_map" "config" {
     DB_USER = "${var.postgresql-admin-login}@${azurerm_postgresql_server.db.name}"
     DB_PASSWORD = var.postgresql-admin-password
     REDIS_URL = "redis://:${urlencode(azurerm_redis_cache.redis.primary_access_key)}@${azurerm_redis_cache.redis.hostname}:${azurerm_redis_cache.redis.port}/0"
+    AZURE_STORAGE_ACCOUNT_NAME = azurerm_storage_account.blob_account.name
+    AZURE_STORAGE_ACCESS_KEY = azurerm_storage_account.blob_account.primary_access_key
+    AZURE_STORAGE_CONTAINER = azurerm_storage_container.storage_container.name
   }
 }
 

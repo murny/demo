@@ -8,37 +8,6 @@ services:
     ports:
       - "5432:5432"
 
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    depends_on:
-      - postgres
-      - redis
-    volumes:
-      - type: bind
-        source: ./
-        target: /app
-    ports:
-      - "3000:3000"
-    environment:
-      - DATABASE_URL=postgresql://postgres:mysecretpassword@postgres:5432/demo?encoding=utf8&pool=5&timeout=5000
-      - REDIS_URL=redis://redis:6379/0
-      - RAILS_ENV=development
-
-  sidekiq:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    command: bundle exec sidekiq
-    depends_on:
-      - postgres
-      - redis
-    environment:
-      - DATABASE_URL=postgresql://postgres:mysecretpassword@postgres:5432/demo?encoding=utf8&pool=5&timeout=5000
-      - REDIS_URL=redis://redis:6379/0
-      - RAILS_ENV=development
-
   redis:
     image: redis:latest
     ports:
