@@ -70,7 +70,7 @@ resource "kubernetes_deployment" "app" {
 
       spec {
         init_container {
-          image = "murny/demo:main"
+          image = "murny/demo:latest"
           image_pull_policy = "Always"
           name = "${var.app-name}-init"
           command = ["rake", "db:migrate"]
@@ -81,7 +81,7 @@ resource "kubernetes_deployment" "app" {
           }
         }
         container {
-          image = "murny/demo:main"
+          image = "murny/demo:latest"
           image_pull_policy = "Always"
           name = "${var.app-name}"
           port {
@@ -146,7 +146,7 @@ resource "kubernetes_deployment" "worker" {
       spec {
         container {
           name = "${var.app-name}-workers"
-          image = "murny/demo:main"
+          image = "murny/demo:latest"
           image_pull_policy = "Always"
           command = ["bundle",  "exec", "sidekiq"]
 
