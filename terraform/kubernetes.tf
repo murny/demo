@@ -16,9 +16,8 @@ resource "helm_release" "ingress-nginx" {
   namespace =  "${var.app-name}"
 }
 
-
 resource "kubernetes_config_map" "config" {
-  depends_on = [azurerm_redis_cache.redis, azurerm_postgresql_server.db, azurerm_storage_container.storage_container]
+  depends_on = [azurerm_redis_cache.redis, azurerm_postgresql_database.postgresql-db, azurerm_storage_container.storage_container]
 
   metadata {
     name = "${var.app-name}-config"
