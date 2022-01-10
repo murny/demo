@@ -1,0 +1,21 @@
+####################
+# Common Variables #
+####################
+
+app-name = ""
+
+##################
+# Authentication #
+##################
+
+azure-subscription-id = ""
+azure-client-id       = ""
+azure-client-secret   = ""
+azure-tenant-id       = ""
+
+#####################
+# PostgreSQL Server #
+#####################
+
+postgresql-admin-login    = ""
+postgresql-admin-password = ""

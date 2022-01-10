@@ -25,7 +25,7 @@ resource "kubernetes_config_map" "config" {
   }
 
   data = {
-    RAILS_MASTER_KEY = data.local_file.masterkey.content
+    RAILS_MASTER_KEY = trimspace(data.local_file.masterkey.content)
     PORT = "3000"
     RAILS_LOG_TO_STDOUT = "true"
     RAILS_ENV = "production"

@@ -20,6 +20,10 @@ COPY package.json yarn.lock /app/
 RUN yarn install --check-files
 COPY . /app/
 
+# Build assets
+RUN yarn run build:css
+RUN yarn run build
+
 EXPOSE 3000
 
 CMD rm -f tmp/pids/server.pid;bundle exec rails server -b 0.0.0.0
