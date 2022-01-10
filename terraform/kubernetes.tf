@@ -126,7 +126,7 @@ resource "kubernetes_deployment" "worker" {
 
   }
   spec {
-    replicas = 2
+    replicas = 1
 
     selector {
       match_labels = {
