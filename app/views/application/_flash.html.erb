@@ -1,7 +1,7 @@
 <%= turbo_frame_tag "flash" do %>
   <% if flash.any? %>
     <div class="fixed inset-x-0 top-0 flex items-end justify-right px-4 py-6 sm:p-6 justify-end z-30 pointer-events-none">
-      <div data-controller="alert" data-alert-dismiss-after-value="3000" class="max-w-sm w-full shadow-lg rounded px-4 py-3 rounded relative pointer-events-auto <%= flash[:notice] ? 'bg-green-50 border-l-4 border-green-700 text-green-700' : 'bg-red-50 border-l-4 border-red-700 text-red-700' %>">
+      <div data-controller="alert" data-alert-dismiss-after-value="3000" class="max-w-sm w-full shadow-lg rounded px-4 py-3 rounded relative pointer-events-auto <%= flash[:notice] ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700' %>">
         <div class="p-2">
           <div class="flex items-start">
             <div class="ml-3 w-0 flex-1 pt-0.5">

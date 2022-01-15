@@ -71,7 +71,7 @@ resource "azurerm_postgresql_server" "db" {
 
 # Create a PostgreSQL Database
 resource "azurerm_postgresql_database" "postgresql-db" {
-  name                = "demo_production"
+  name                = "${var.app-name}_production"
   resource_group_name = azurerm_resource_group.rg.name
   server_name         = azurerm_postgresql_server.db.name
   charset             = "utf8"
